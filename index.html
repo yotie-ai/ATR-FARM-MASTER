@@ -109,7 +109,43 @@ const levels=[
 let S={name:"",xp:0,life:5,coin:100,score:0,level:1,step:0,done:{}};
 function $(id){return document.getElementById(id)}
 function save(){localStorage.setItem("atrFarmMasterV3",JSON.stringify(S))}
-function startGame(){let n=$("studentName").value.trim();if(!n)return alert("Isi nama terlebih dahulu.");S.name=n;S.xp=0;S.life=5;S.coin=100;S.score=0;S.level=1;S.step=0;S.done={};save();$("start").classList.add("hidden");$("game").classList.remove("hidden");render()}
+async function saveToSupabase(){
+  try{
+    const id=localStorage.getItem("atrFarmMasterSupabaseId");
+
+    const data={
+      student_name:S.name,
+      class_name:"",
+      score:S.score,
+      xp:S.xp,
+      coins:S.coin,
+      lives:S.life,
+      current_level:S.level,
+      completed_levels:Object.keys(S.done).length,
+      level_data:S
+    };
+
+    if(id){
+      await supabaseClient
+        .from("game_progress")
+        .update(data)
+        .eq("id",id);
+    }else{
+      const {data:row,error}=await supabaseClient
+        .from("game_progress")
+        .insert(data)
+        .select("id")
+        .single();
+
+      if(!error && row){
+        localStorage.setItem("atrFarmMasterSupabaseId",row.id);
+      }
+    }
+  }catch(error){
+    console.log("Supabase belum tersimpan:",error);
+  }
+}  
+function startGame(){let n=$("studentName").value.trim();if(!n)return alert("Isi nama terlebih dahulu.");S.name=n;S.xp=0;S.life=5;S.coin=100;S.score=0;S.level=1;S.step=0;S.done={};save();saveToSupabase();$("start").classList.add("hidden");$("game").classList.remove("hidden");render()}
 function render(){ $("welcome").textContent="👋 Selamat datang, "+S.name+"!"; $("xp").textContent=S.xp;$("life").textContent=S.life;$("coin").textContent=S.coin;$("score").textContent=S.score;
 let pct=Math.round((Object.keys(S.done).length/8)*100);$("bar").style.width=pct+"%"; 
 $("levels").innerHTML=levels.map(l=>`<div class="level ${S.done[l.n]?'done':l.n===S.level?'active':l.n>S.level?'lock':''}" onclick="${l.n<=S.level?`go(${l.n})`:''}"><b>${l.icon} Level ${l.n}</b><br>${l.t}<div class="small">${S.done[l.n]?'✅ Selesai':l.n===S.level?'🎯 Aktif':'🔒 Terkunci'}</div></div>`).join("");
