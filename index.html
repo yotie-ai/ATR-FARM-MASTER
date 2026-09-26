@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#166534">
+<title>ATR FARM MASTER v3</title>
+<style>
+:root{--green:#166534;--green2:#22c55e;--gold:#f59e0b;--cream:#fffdf5;--ink:#17251b;--red:#dc2626;--blue:#2563eb}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,#eaf8ed,#fff9e9);color:var(--ink)}
+.container{max-width:1050px;margin:auto;padding:18px}.hero{background:linear-gradient(135deg,#14532d,#166534);color:white;border-radius:24px;padding:28px;box-shadow:0 12px 35px #14532d25}
+h1{margin:0 0 8px;font-size:clamp(28px,5vw,48px)} h2{margin-top:0}.tag{display:inline-block;background:#ffffff1d;border:1px solid #ffffff35;padding:7px 12px;border-radius:99px;margin:4px 4px 0 0;font-size:13px}
+.panel,.card{background:#fff;border-radius:20px;padding:22px;margin-top:16px;box-shadow:0 7px 24px #18351d12;border:1px solid #e8eee9}
+input,select{width:100%;padding:13px;border:1px solid #ccd8ce;border-radius:12px;font-size:16px;margin:7px 0 12px}
+button{border:0;border-radius:12px;padding:12px 18px;font-size:15px;font-weight:700;cursor:pointer;background:var(--green);color:white;margin:5px}
+button.secondary{background:#e8f3ea;color:var(--green)}button.gold{background:var(--gold);color:#382300}button.danger{background:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px}.stat{background:#fff;padding:13px;border-radius:15px;text-align:center;border:1px solid #e5eee6}.stat b{display:block;font-size:24px;color:var(--green)}
+.levels{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.level{padding:14px;border-radius:16px;background:#f4f8f4;border:2px solid #e4ece5}.level.done{border-color:#22c55e;background:#ecfdf3}.level.active{border-color:#f59e0b;background:#fffbeb}.level.lock{opacity:.55}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px}.option{display:block;width:100%;text-align:left;background:#f7faf7;color:#17301d;border:1px solid #dce8de;margin:9px 0}.option:hover{background:#edf8ef}.feedback{padding:14px;border-radius:13px;margin-top:12px;background:#f0fdf4;border-left:5px solid #22c55e}.wrong{background:#fff1f2;border-left-color:#dc2626}
+.progress{height:10px;background:#e6eee7;border-radius:99px;overflow:hidden;margin:10px 0}.bar{height:100%;background:linear-gradient(90deg,#22c55e,#f59e0b)}
+.badge{display:inline-block;background:#fff7d6;border:1px solid #f5c94a;padding:10px 14px;border-radius:15px;margin:5px}
+.small{font-size:13px;color:#5d6d62}.center{text-align:center}.hidden{display:none}.pill{font-weight:700;color:var(--green)}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid #e4ebe5;text-align:left}
+@media(max-width:700px){.stats,.levels,.grid2{grid-template-columns:1fr 1fr}.hero{padding:20px}.panel,.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header class="hero">
+  <div class="tag">🎓 Pembelajaran Mendalam</div><div class="tag">🔬 STEM</div><div class="tag">🐄 Agribisnis Ternak Ruminansia</div>
+  <h1>ATR FARM MASTER</h1>
+  <p>Simulasi menjadi manajer peternakan ruminansia muda. Belajar, memilih, menghitung, dan mengambil keputusan.</p>
+</header>
+
+<section id="start" class="panel">
+<h2>👩‍🌾 Mulai Misi Peternak Muda</h2>
+<p>Masukkan nama peserta didik. Progres versi ini tersimpan di browser perangkat.</p>
+<input id="studentName" placeholder="Nama peserta didik">
+<button onclick="startGame()">🚜 Mulai Game</button>
+</section>
+
+<section id="game" class="hidden">
+<div class="stats">
+<div class="stat">⭐ XP<b id="xp">0</b></div><div class="stat">❤️ Nyawa<b id="life">5</b></div>
+<div class="stat">🪙 Koin<b id="coin">100</b></div><div class="stat">🏆 Skor<b id="score">0</b></div>
+</div>
+<div class="panel"><b id="welcome"></b><div class="progress"><div id="bar" class="bar" style="width:0%"></div></div></div>
+<div class="panel"><h2>🗺️ Peta Kompetensi</h2><div id="levels" class="levels"></div></div>
+<div id="mission"></div>
+</section>
+</div>
+
+<script>
+const levels=[
+{n:1,t:"K3LH Kandang",icon:"🦺",qs:[
+["Kondisi mana paling aman sebelum siswa masuk kandang?","Memakai APD dan memeriksa kondisi area","Langsung masuk agar cepat","Membawa makanan ke kandang","Berlari menuju ternak",0,"K3LH dimulai dari APD, pemeriksaan lingkungan, dan prosedur kerja aman."],
+["Lantai kandang licin dan basah. Tindakan pertama?","Membiarkannya","Menambah air","Mengamankan area dan membersihkan sumber bahaya","Menyuruh teman berlari",2,"Bahaya terpeleset harus dikendalikan sebelum pekerjaan dilanjutkan."],
+["APAR digunakan untuk...","Menimbang ternak","Memadamkan kebakaran pada kondisi sesuai jenis APAR","Mengukur pakan","Membersihkan kandang",1,"APAR merupakan alat pemadam api ringan dan harus sesuai kelas kebakaran."],
+["Saat menghadapi ternak yang gelisah, siswa sebaiknya...","Berteriak","Mengejar","Menggunakan handling yang tenang dan aman","Memukul ternak",2,"Handling harus meminimalkan stres dan risiko cedera."],
+["Setelah praktik, APD dan alat sebaiknya...","Ditinggalkan","Dibersihkan dan disimpan sesuai prosedur","Dilempar","Dibawa pulang tanpa diperiksa",1,"Perawatan dan penyimpanan alat adalah bagian dari budaya K3."]
+]},
+{n:2,t:"Seleksi Bibit",icon:"🐄",qs:[
+["Indikator penting dalam memilih bibit adalah...","Kesehatan dan kondisi tubuh","Warna tali","Suara siswa","Ukuran ember",0,"Seleksi bibit mempertimbangkan kesehatan, performa, struktur tubuh, dan tujuan produksi."],
+["Ternak yang sehat umumnya menunjukkan...","Nafsu makan baik dan respons normal","Lemas terus","Mata sangat keruh","Diare berat",0,"Observasi kondisi umum merupakan bagian penting seleksi awal."],
+["Mengapa asal-usul/rekam data ternak penting?","Untuk dekorasi","Membantu penelusuran performa dan identitas","Agar kandang lebih ramai","Tidak ada gunanya",1,"Data membantu keputusan pemeliharaan dan seleksi."],
+["Dalam seleksi, tujuan produksi harus...","Diabaikan","Disesuaikan dengan karakteristik ternak","Diganti setiap jam","Hanya berdasarkan warna",1,"Bibit harus dipilih sesuai tujuan usaha."],
+["Jika ditemukan dugaan penyakit, tindakan tepat adalah...","Tetap dicampur","Diabaikan","Pisahkan sesuai SOP dan laporkan","Dijual diam-diam",2,"Biosekuriti dan pelaporan membantu mencegah penyebaran masalah."]
+]},
+{n:3,t:"Penandaan Ternak",icon:"🏷️",qs:[
+["Tujuan utama penandaan ternak adalah...","Identifikasi individu","Memperindah ternak","Mengubah bobot","Mengganti pakan",0,"Identitas individu penting untuk pencatatan dan manajemen."],
+["Data yang ideal dicatat bersama identitas ternak adalah...","Tanggal/asal dan data penting pemeliharaan","Warna sepatu siswa","Cuaca di kota lain","Nama artis",0,"Identitas perlu terhubung dengan data pemeliharaan."],
+["Penandaan harus dilakukan dengan...","Sembarangan","Metode yang sesuai SOP dan memperhatikan kesejahteraan","Tergesa-gesa","Tanpa pencatatan",1,"Metode identifikasi harus aman dan terdokumentasi."],
+["Jika nomor ear tag tidak terbaca, sebaiknya...","Menebak","Memeriksa ulang dan memperbaiki pencatatan","Menghapus semua data","Membiarkan",1,"Akurasi identitas sangat penting."],
+["Pencatatan identitas mendukung...","Traceability","Kebingungan data","Pemborosan","Tidak ada manfaat",0,"Traceability membantu penelusuran riwayat ternak."]
+]},
+{n:4,t:"Estimasi Bobot",icon:"⚖️",calc:true},
+{n:5,t:"Master Pakan",icon:"🌾",feed:true},
+{n:6,t:"Detektif Kesehatan",icon:"🩺",health:true},
+{n:7,t:"Pengelolaan Limbah",icon:"♻️",waste:true},
+{n:8,t:"Bisnis Peternakan",icon:"💰",business:true}
+];
+
+let S={name:"",xp:0,life:5,coin:100,score:0,level:1,step:0,done:{}};
+function $(id){return document.getElementById(id)}
+function save(){localStorage.setItem("atrFarmMasterV3",JSON.stringify(S))}
+function startGame(){let n=$("studentName").value.trim();if(!n)return alert("Isi nama terlebih dahulu.");S.name=n;S.xp=0;S.life=5;S.coin=100;S.score=0;S.level=1;S.step=0;S.done={};save();$("start").classList.add("hidden");$("game").classList.remove("hidden");render()}
+function render(){ $("welcome").textContent="👋 Selamat datang, "+S.name+"!"; $("xp").textContent=S.xp;$("life").textContent=S.life;$("coin").textContent=S.coin;$("score").textContent=S.score;
+let pct=Math.round((Object.keys(S.done).length/8)*100);$("bar").style.width=pct+"%"; 
+$("levels").innerHTML=levels.map(l=>`<div class="level ${S.done[l.n]?'done':l.n===S.level?'active':l.n>S.level?'lock':''}" onclick="${l.n<=S.level?`go(${l.n})`:''}"><b>${l.icon} Level ${l.n}</b><br>${l.t}<div class="small">${S.done[l.n]?'✅ Selesai':l.n===S.level?'🎯 Aktif':'🔒 Terkunci'}</div></div>`).join("");
+renderMission()}
+function go(n){if(n>S.level)return;S.level=n;S.step=0;render()}
+function renderMission(){let l=levels[S.level-1];let el=$("mission");
+if(l.qs){let q=l.qs[S.step];el.innerHTML=`<div class="card"><span class="pill">LEVEL ${l.n} • ${l.t}</span><h2>${q[0]}</h2>${q.slice(1,5).map((x,i)=>`<button class="option" onclick="answer(${i},${q[5]})">${String.fromCharCode(65+i)}. ${x}</button>`).join("")}<div class="small">Soal ${S.step+1} dari ${l.qs.length}</div></div>`}
+else if(l.calc) renderCalc(el); else if(l.feed) renderFeed(el); else if(l.health) renderHealth(el); else if(l.waste) renderWaste(el); else if(l.business) renderBusiness(el)}
+function answer(choice,correct){let l=levels[S.level-1],q=l.qs[S.step],ok=choice===correct;if(ok){S.xp+=20;S.coin+=10;S.score+=100}else{S.life--;S.score=Math.max(0,S.score-25)}save();
+$("mission").innerHTML=`<div class="card"><h2>${ok?'🎉 Benar!':'❌ Belum tepat'}</h2><div class="feedback ${ok?'':'wrong'}">${q[6]}</div><p>${ok?'+20 XP • +10 koin • +100 skor':'-1 nyawa • -25 skor'}</p><button onclick="${S.step+1<l.qs.length?'nextQ()':'complete()'}">${S.step+1<l.qs.length?'Soal Berikutnya':'Selesaikan Level'}</button></div>`}
+function nextQ(){S.step++;render()}
+function complete(){let n=S.level;S.done[n]=true;if(n<8)S.level=n+1;S.step=0;S.xp+=30;S.coin+=20;save();render();alert("Level selesai! +30 XP dan +20 koin.");}
+
+function renderCalc(el){el.innerHTML=`<div class="card"><span class="pill">LEVEL 4 • ESTIMASI BOBOT</span><h2>⚖️ Hitung estimasi bobot badan</h2><p>Masukkan lingkar dada (cm) dan panjang badan (cm).</p><div class="grid2"><div><label>Lingkar dada (cm)</label><input id="ld" type="number" placeholder="contoh 150"></div><div><label>Panjang badan (cm)</label><input id="pb" type="number" placeholder="contoh 120"></div></div><button onclick="calc()">Hitung Bobot</button><div id="calcResult"></div><p class="small">Rumus latihan: (LD² × PB) / 10.840. Hasil adalah estimasi pembelajaran, bukan pengganti penimbangan langsung.</p></div>`}
+function calc(){let ld=+$("ld").value,pb=+$("pb").value;if(!ld||!pb)return alert("Isi kedua ukuran.");let w=(ld*ld*pb)/10840;$("calcResult").innerHTML=`<div class="feedback"><b>Estimasi bobot: ${w.toFixed(1)} kg</b><br>Selanjutnya bandingkan dengan hasil penimbangan jika tersedia.</div><button onclick="complete()">Selesaikan Level</button>`;S.xp+=25;S.score+=120;save()}
+
+function renderFeed(el){el.innerHTML=`<div class="card"><span class="pill">LEVEL 5 • MASTER PAKAN</span><h2>🌾 Susun ransum untuk sapi</h2><p>Sapi latihan berbobot <b>300 kg</b>. Target bahan kering latihan: <b>2,5% bobot badan/hari</b>.</p><div class="feedback">Kebutuhan BK = 300 × 2,5% = <b>7,5 kg BK/hari</b>.</div><p>Pilih kombinasi bahan. Anggap bahan berikut memiliki BK:</p><table><tr><th>Bahan</th><th>Jumlah</th><th>BK</th></tr><tr><td>Hijauan</td><td>18 kg</td><td>25%</td></tr><tr><td>Konsentrat</td><td>2 kg</td><td>90%</td></tr><tr><td>Silase</td><td>5 kg</td><td>30%</td></tr></table><div class="grid2"><button onclick="feed(0)">Pilih Hijauan + Konsentrat</button><button onclick="feed(1)">Pilih Silase + Konsentrat</button></div><div id="feedResult"></div></div>`}
+function feed(x){let ok=x===0;S.xp+=ok?40:10;S.score+=ok?200:50;S.coin+=ok?25:5;save();$("feedResult").innerHTML=`<div class="feedback ${ok?'':'wrong'}">${ok?'Pilihan latihan memenuhi target lebih mendekati: hijauan 18×25%=4,5 kg BK + konsentrat 2×90%=1,8 kg BK. Total 6,3 kg BK; siswa perlu menyesuaikan formulasi agar mencapai target 7,5 kg.':'Kombinasi ini menghasilkan BK yang lebih rendah dan perlu evaluasi formulasi.'}</div><button onclick="complete()">Lanjutkan Level 6</button>`}
+
+function renderHealth(el){el.innerHTML=`<div class="card"><span class="pill">LEVEL 6 • DETEKTIF KESEHATAN</span><h2>🩺 Baca tanda klinis awal</h2><p>Seekor sapi tampak lesu, nafsu makan turun, dan feses lebih cair dari biasanya. Apa langkah pertama?</p>${['Langsung memberi obat apa saja','Observasi, catat tanda, pisahkan bila sesuai SOP, dan laporkan','Memaksa makan sebanyak-banyaknya','Mencampurkan dengan ternak sehat'].map((x,i)=>`<button class="option" onclick="health(${i})">${String.fromCharCode(65+i)}. ${x}</button>`).join('')}<div id="healthResult"></div><p class="small">Game ini untuk pembelajaran observasi dan pengambilan keputusan awal, bukan diagnosis atau pengganti pemeriksaan dokter hewan.</p></div>`}
+function health(i){let ok=i===1;S.xp+=ok?45:10;S.score+=ok?220:40;S.coin+=ok?20:5;save();$("healthResult").innerHTML=`<div class="feedback ${ok?'':'wrong'}">${ok?'Tepat. Prioritaskan observasi, pencatatan, biosekuriti, dan pelaporan sesuai SOP.':'Hindari tindakan tanpa dasar. Masalah kesehatan perlu observasi dan penanganan sesuai SOP/tenaga berwenang.'}</div><button onclick="complete()">Selesaikan Level</button>`}
+
+function renderWaste(el){el.innerHTML=`<div class="card"><span class="pill">LEVEL 7 • PENGELOLAAN LIMBAH</span><h2>♻️ Pilih solusi limbah</h2><p>Peternakan menghasilkan kotoran sapi setiap hari. Pilihan mana yang paling mendukung prinsip pengelolaan berkelanjutan?</p>${['Membuang ke sungai','Mengolah menjadi kompos/pupuk organik dengan prosedur yang benar','Membakar semua limbah','Menumpuk tanpa pengelolaan'].map((x,i)=>`<button class="option" onclick="waste(${i})">${String.fromCharCode(65+i)}. ${x}</button>`).join('')}<div id="wasteResult"></div></div>`}
+function waste(i){let ok=i===1;S.xp+=ok?45:10;S.score+=ok?220:40;S.coin+=ok?25:5;save();$("wasteResult").innerHTML=`<div class="feedback ${ok?'':'wrong'}">${ok?'Tepat. Pengolahan menjadi kompos/pupuk organik dapat mengurangi beban limbah sekaligus menghasilkan produk bernilai guna jika prosesnya benar.':'Pilihan ini berisiko menimbulkan pencemaran atau masalah lingkungan.'}</div><button onclick="complete()">Selesaikan Level</button>`}
+
+function renderBusiness(el){el.innerHTML=`<div class="card"><span class="pill">LEVEL 8 • BISNIS PETERNAKAN</span><h2>💰 Tantangan Manajer Farm</h2><p>Modal virtual: <b>Rp10.000.000</b>. Hitung apakah keputusan pembelian masuk akal.</p><div class="grid2"><div><label>Harga beli ternak</label><input id="buy" type="number" value="6500000"></div><div><label>Biaya pakan + kesehatan</label><input id="cost" type="number" value="1800000"></div></div><label>Harga jual</label><input id="sell" type="number" value="9500000"><button onclick="business()">Hitung usaha</button><div id="bizResult"></div></div>`}
+function business(){let b=+$("buy").value,c=+$("cost").value,s=+$("sell").value,total=b+c,profit=s-total;let ok=profit>0;S.xp+=50;S.score+=ok?300:80;S.coin+=ok?40:10;save();$("bizResult").innerHTML=`<div class="feedback ${ok?'':'wrong'}"><b>Total biaya: Rp${total.toLocaleString('id-ID')}</b><br><b>Perkiraan hasil bersih: Rp${profit.toLocaleString('id-ID')}</b><br>${ok?'Usaha menghasilkan margin positif pada skenario latihan ini.':'Skenario ini menghasilkan nilai negatif sehingga perlu dievaluasi.'}</div><button onclick="finishGame()">🏆 Lihat Hasil Akhir</button>`}
+function finishGame(){S.done[8]=true;save();render();$("mission").innerHTML=`<div class="card center"><h2>🏆 MISI SELESAI!</h2><p><b>${S.name}</b> telah menyelesaikan ATR FARM MASTER.</p><div class="badge">🌱 Peternak Muda ATR</div><div class="badge">🔬 Problem Solver</div><div class="badge">♻️ Farm Berkelanjutan</div><div class="badge">💰 Farm Manager</div><h3>Skor Akhir: ${S.score}</h3><p>XP: ${S.xp} • Koin: ${S.coin} • Nyawa tersisa: ${S.life}</p><button onclick="window.print()">🖨️ Cetak Hasil</button><button class="secondary" onclick="location.reload()">🔄 Mulai Ulang</button></div>`}
+</script>
+</body>
+</html>
