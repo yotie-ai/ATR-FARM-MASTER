@@ -32,7 +32,19 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 #installApp{font-size:16px;padding:13px 20px}
 #pwaPanel{padding:14px;margin-top:12px}
 </style>
-</head>
+< <!-- SUPABASE CONNECTION -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://rknpppdxeaspgryummtd.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_jOLrxDstz38qGXmA0XBVKg_lCqH-df_";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+</script>/head>
 <body>
 <div class="container">
 <header class="hero">
